@@ -1,3 +1,4 @@
+import cloudinary from "../lib/cloudinary.js";
 import User from "../models/User.js";
 
 export const getSugestedConnection = async (req, res) => {
@@ -52,7 +53,16 @@ export const updateProfile = async (req, res) => {
             updatedData[field] = req.body[field];
         }
     }
-    // todo check for the profile img and banner img and upload to cloudinary
+    
+    if(req.body.profilePicture){
+        const result = await cloudinary.uploader.upload(req.body.profilePicture);
+        updatedData.profilePicture = result.secure_url;
+    }
+    if(req.body.bannerImg){
+        const result = await cloudinary.uploader.upload(req.body.bannerImg);
+        updatedData.bannerImg = result.secure_url;
+    }
+
     const user = await User.findByIdAndUpdate(req.user._id,{
         $set:updatedData
     },{new:true});
