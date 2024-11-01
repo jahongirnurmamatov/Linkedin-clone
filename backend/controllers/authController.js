@@ -1,6 +1,7 @@
 import User from "../models/User.js";
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { sendWelcomeEmail } from "../emails/emailHandlers.js";
 
 export const signup = async(req,res)=>{
     try {
@@ -32,8 +33,13 @@ export const signup = async(req,res)=>{
             secure: process.env.NODE_ENV==='production' //sets the cookie to be sent only over HTTPS
         }).status(201).json({message:"User created successfully"});
 
+        const profileUrl = process.env.CLIENT_URL + '/profile/' + user.username;
         // to do send welcome email using mailtrap
-        
+        try {
+            await sendWelcomeEmail(user.email,user.name,profileUrl);
+        } catch (error) {
+            console.error(`Error sending in welcome Email: ${error.message}	`);
+        }
     } catch (error) {
         console.log(error.message);
         res.status(500).json({message:"Something went wrong"});
