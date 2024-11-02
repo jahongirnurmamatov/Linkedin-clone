@@ -150,10 +150,43 @@ export const getConnections = async (req, res) => {
 };
 export const deleteConnection = async (req, res) => {
   try {
-    
-  } catch (error) {}
+    const myId = req.user._id;
+    const { userId } = req.params;
+    await User.findByIdAndUpdate(myId, { $pull: { connections: userId } });
+    await User.findByIdAndUpdate(userId, { $pull: { connections: myId } });
+    res.json({ message: "Connection removed successfully!" });
+  } catch (error) {
+    console.log("Error in removing connetions!");
+    res.status(500).json({ message: "Server error" });
+  }
 };
 export const getConnectionStatus = async (req, res) => {
   try {
-  } catch (error) {}
+    const targetUserId = req.params.userId;
+    const currentUserId = req.user._id;
+
+    const currentUser = req.user;
+    if (currentUser.connections.includes(targetUserId)) {
+      return res.json({ status: "connected" });
+    }
+    const pendingRequest = await Connection.findOne({
+      $or: [
+        { sender: currentUserId, recipient: targetUserId },
+        { sender: targetUserId, recipient: currentUserId },
+      ],
+      status: "pending",
+    });
+    if (pendingRequest) {
+      if (pendingRequest.sender.toString() === currentUserId.toString()) {
+        return res.json({ status: "pending" });
+      } else {
+        return res.json({ status: "received" });
+      }
+    }
+    // if no connection or pending req found
+    res.json({ status: "not_connected" });
+  } catch (error) {
+    console.log("Error in getting status of connetion!");
+    res.status(500).json({ message: "Server error" });
+  }
 };
