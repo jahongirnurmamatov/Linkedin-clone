@@ -1,9 +1,12 @@
 import React from 'react'
-import Layout from './components/Layout'
+
 import {Routes, Route} from 'react-router-dom'
 import HomePage from './pages/HomePage'
 import SignUpPage from './pages/SignUpPage'
 import LoginPage from './pages/LoginPage'
+import Layout from './components/layout/Layout'
+
+
 const App = () => {
   return (
     <Layout >
