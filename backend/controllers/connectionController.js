@@ -100,18 +100,57 @@ export const acceptConnectRequest = async (req, res) => {
 };
 export const rejectConenctionRequest = async (req, res) => {
   try {
-  } catch (error) {}
+    const { requestId } = req.params;
+    const userId = req.user._id;
+    const request = await Connection.findById(requestId);
+    if (request.recipient._id.toString() === userId.toString()) {
+      return res
+        .status(403)
+        .json({ message: "You are not authorized to reject this request" });
+    }
+    if (request.status !== "pending") {
+      return res
+        .status(400)
+        .json({ message: "This request has already been processed" });
+    }
+    request.status = "rejected";
+    await request.save();
+    res.json({ message: "Connection request rejected successfully" });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ message: "Server error" });
+  }
 };
 export const getConnectionRequests = async (req, res) => {
   try {
-  } catch (error) {}
+    const userId = req.user._id;
+    const requests = await Connection.find({
+      recipient: userId,
+      status: "pending",
+    }).populate("sender", "name username email profilePic headline");
+
+    res.json(requests);
+  } catch (error) {
+    console.log("Error in getting connetion request!");
+    res.status(500).json({ message: "Server error" });
+  }
 };
 export const getConnections = async (req, res) => {
   try {
-  } catch (error) {}
+    const userId = req.user._id;
+    const user = await User.findById(userId).populate(
+      "connections",
+      "name username email profilePic headline connections"
+    );
+    res.json(user.connections);
+  } catch (error) {
+    console.log("Error in getting connetions!");
+    res.status(500).json({ message: "Server error" });
+  }
 };
 export const deleteConnection = async (req, res) => {
   try {
+    
   } catch (error) {}
 };
 export const getConnectionStatus = async (req, res) => {
