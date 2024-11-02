@@ -4,6 +4,7 @@ import authRoutes from "./routes/authRoute.js";
 import userRoutes from "./routes/userRoutes.js";
 import postRoutes from "./routes/postRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
+import connectionRoutes from "./routes/connectionRoutes.js";
 
 import { connectDb } from "./lib/db.js";
 import cookieParser from "cookie-parser";
@@ -20,6 +21,7 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/posts", postRoutes);
 app.use("/api/v1/notifications", notificationRoutes);
+app.use("/api/v1/connections", connectionRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
