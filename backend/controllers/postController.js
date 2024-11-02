@@ -124,3 +124,32 @@ export const createComment = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+export const likePost = async (req, res) => {
+  try {
+    const postId = req.params.id;
+    const post = await Post.findById(postId);
+    const userId = req.user._id;
+
+    if (post.likes.includes(userId)) {
+      post.likes = post.likes.filter(
+        (id) => id.toString() !== userId.toString()
+      );
+    } else {
+      post.likes.push(userId);
+
+      const newNotification = new Notification({
+        receipent: post.author,
+        type: "like",
+        relatedUser: req.user._id,
+        relatedPost: postId,
+      });
+      await newNotification.save();
+    }
+    await post.save();
+    res.status(200).json(post);
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ message: "Error in liking post" });
+  }
+};
