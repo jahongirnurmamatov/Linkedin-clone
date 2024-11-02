@@ -67,3 +67,47 @@ export const deletePost = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+export const getPostById = async (req, res) => {
+  try {
+    const postId = req.params.id;
+    const post = await Post.findById(postId)
+      .populate("author", "name username profilePicture headline")
+      .populate("comments.user", "name profilePicture username headline");
+
+    res.status(200).json(post);
+  } catch (error) {
+    console.error("Error in getting post by Id: ", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const createComment = async (req, res) => {
+  try {
+    const postId = req.params.id;
+    const { content } = req.body;
+    const post = await Post.findByIdAndUpdate(
+      postId,
+      {
+        $push: { comments: { user: req.user._id, content } },
+      },
+      { new: true }
+    ).populate("author", "name email username headline profilePicture");
+
+    // create a notification if the comment owner is not the post owner
+    if (post.author.toString() != req.user._id.toString()) {
+      const newNotification = new Notification({
+        receipent: post.author,
+        type: "comment",
+        relatedUser: req.user._id,
+        relatedPost: postId,
+      });
+    }
+    await newNotification.save();
+    // to do send email
+    res.status(200).json(post);
+  } catch (error) {
+    console.error("Error in commenting on post: ", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};

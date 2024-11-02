@@ -20,7 +20,7 @@ const notification = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Post",
     },
-    rread: {
+    read: {
       type: Boolean,
       default: false,
     },
