@@ -16,13 +16,15 @@ const app = express({ limit: "5mb", extended: true });
 const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
-app.use(cookieParser());
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: process.env.CLIENT_URL || "http://localhost:5173", // adjust for local development
     credentials: true,
   })
 );
+
+app.use(cookieParser());
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/users", userRoutes);
