@@ -4,7 +4,7 @@ import { getPublicProfile, getSugestedConnection, updateProfile } from '../contr
 
 const userRoutes = express.Router();
 
-userRoutes.get('/suggestion',protectRoute,getSugestedConnection);
+userRoutes.get('/suggestions',protectRoute,getSugestedConnection);
 userRoutes.get('/:username',protectRoute,getPublicProfile);
 
 userRoutes.put('/profile',protectRoute,updateProfile);
