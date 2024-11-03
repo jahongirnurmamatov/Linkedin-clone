@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { axiosInstanse } from "../lib/axios";
 import { toast } from "react-hot-toast";
 import Sidebar from "../components/Sidebar";
+import PostCreation from "../components/PostCreation";
 
 const HomePage = () => {
   const { data: authUser } = useQuery({ queryKey: ["authUser"] });
@@ -36,6 +37,9 @@ const HomePage = () => {
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
       <div className="hidden lg:block lg:col-span-1">
         <Sidebar  user={authUser}/>
+      </div>
+      <div className="col-span-1 lg:col-span-2 order-first lg:order-none">
+        <PostCreation user={authUser}/>
       </div>
     </div>
   );

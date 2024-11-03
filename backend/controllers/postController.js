@@ -1,6 +1,6 @@
 import { sendCommentNotificationEmail } from "../emails/emailHandlers.js";
 import Post from "../models/Post.js";
-import { v2 as cloudinary } from "cloudinary";
+import cloudinary from "../lib/cloudinary.js";
 
 export const getFeedPosts = async (req, res) => {
   try {
