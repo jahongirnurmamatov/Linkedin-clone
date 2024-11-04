@@ -1,11 +1,12 @@
 import { sendCommentNotificationEmail } from "../emails/emailHandlers.js";
 import Post from "../models/Post.js";
 import cloudinary from "../lib/cloudinary.js";
+import Notification from "../models/Notification.js";
 
 export const getFeedPosts = async (req, res) => {
   try {
     const posts = await Post.find({
-      author: { $in: req.user.connections },
+      author: { $in: [...req.user.connections, req.user._id] },
     })
       .populate("author", "name username profilePicture headline")
       .populate("comments.user", "name profilePicture")
@@ -103,8 +104,9 @@ export const createComment = async (req, res) => {
         relatedUser: req.user._id,
         relatedPost: postId,
       });
+      await newNotification.save();
     }
-    await newNotification.save();
+
     // to do send email
     try {
       const postUrl = process.env.CLIEN_URL + "/post/" + postId;
