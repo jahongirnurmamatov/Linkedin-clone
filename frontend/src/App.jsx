@@ -10,6 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import { axiosInstanse } from "./lib/axios";
 import NotificationsPage from "./pages/NotificationsPage";
 import NetworksPage from "./pages/NetworksPage";
+import PostPage from "./pages/PostPage";
 
 const App = () => {
   const { data: authUser, isLoading } = useQuery({
@@ -53,6 +54,10 @@ const App = () => {
         <Route
           path="/network"
           element={authUser ? <NetworksPage /> : <Navigate to={"/login"} />}
+        />
+        <Route
+          path="/post/:postId"
+          element={authUser ? <PostPage /> : <Navigate to={"/login"} />}
         />
       </Routes>
       <Toaster />
