@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 
-const notification = new mongoose.Schema(
+const notificationSchema = new mongoose.Schema(
   {
-    receipent: {
+    recipient: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
@@ -27,3 +27,6 @@ const notification = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+const Notification = mongoose.model("Notification",notificationSchema);
+export default Notification;

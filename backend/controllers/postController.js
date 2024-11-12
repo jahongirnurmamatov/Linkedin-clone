@@ -1,10 +1,12 @@
+import { sendCommentNotificationEmail } from "../emails/emailHandlers.js";
 import Post from "../models/Post.js";
-import { v2 as cloudinary } from "cloudinary";
+import cloudinary from "../lib/cloudinary.js";
+import Notification from "../models/Notification.js";
 
 export const getFeedPosts = async (req, res) => {
   try {
     const posts = await Post.find({
-      author: { $in: req.user.connections },
+      author: { $in: [...req.user.connections, req.user._id] },
     })
       .populate("author", "name username profilePicture headline")
       .populate("comments.user", "name profilePicture")
@@ -95,19 +97,65 @@ export const createComment = async (req, res) => {
     ).populate("author", "name email username headline profilePicture");
 
     // create a notification if the comment owner is not the post owner
-    if (post.author.toString() != req.user._id.toString()) {
+    if (post.author._id.toString() !== req.user._id.toString()) {
+      console.log(post.author._id.toString(), req.user._id.toString())
       const newNotification = new Notification({
-        receipent: post.author,
+        recipient: post.author,
         type: "comment",
         relatedUser: req.user._id,
         relatedPost: postId,
       });
+      await newNotification.save();
     }
-    await newNotification.save();
+
     // to do send email
+    try {
+      const postUrl = process.env.CLIEN_URL + "/post/" + postId;
+      await sendCommentNotificationEmail(
+        post.author.email,
+        post.author.name,
+        req.user.name,
+        postUrl,
+        content
+      );
+    } catch (error) {
+      console.log("Error in sending notification", error.message);
+    }
     res.status(200).json(post);
   } catch (error) {
     console.error("Error in commenting on post: ", error.message);
     res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const likePost = async (req, res) => {
+  try {
+    const postId = req.params.id;
+    const post = await Post.findById(postId);
+    const userId = req.user._id;
+
+    if (post.likes.includes(userId)) {
+      post.likes = post.likes.filter(
+        (id) => id.toString() !== userId.toString()
+      );
+    } else {
+      post.likes.push(userId);
+    
+
+      if (req.user._id.toString() !== post.author._id.toString()) {
+        const newNotification = new Notification({
+          recipient: post.author,
+          type: "like",
+          relatedUser: req.user._id,
+          relatedPost: postId,
+        });
+        await newNotification.save();
+      }
+    }
+    await post.save();
+    res.status(200).json(post);
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ message: "Error in liking post" });
   }
 };
