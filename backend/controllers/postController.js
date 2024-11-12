@@ -97,9 +97,10 @@ export const createComment = async (req, res) => {
     ).populate("author", "name email username headline profilePicture");
 
     // create a notification if the comment owner is not the post owner
-    if (post.author.toString() != req.user._id.toString()) {
+    if (post.author._id.toString() !== req.user._id.toString()) {
+      console.log(post.author._id.toString(), req.user._id.toString())
       const newNotification = new Notification({
-        receipent: post.author,
+        recipient: post.author,
         type: "comment",
         relatedUser: req.user._id,
         relatedPost: postId,
@@ -139,14 +140,17 @@ export const likePost = async (req, res) => {
       );
     } else {
       post.likes.push(userId);
+    
 
-      const newNotification = new Notification({
-        receipent: post.author,
-        type: "like",
-        relatedUser: req.user._id,
-        relatedPost: postId,
-      });
-      await newNotification.save();
+      if (req.user._id.toString() !== post.author._id.toString()) {
+        const newNotification = new Notification({
+          recipient: post.author,
+          type: "like",
+          relatedUser: req.user._id,
+          relatedPost: postId,
+        });
+        await newNotification.save();
+      }
     }
     await post.save();
     res.status(200).json(post);

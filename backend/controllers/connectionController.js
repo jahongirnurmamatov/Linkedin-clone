@@ -47,7 +47,6 @@ export const acceptConnectRequest = async (req, res) => {
       return res.status(404).json({ message: "Request not found!" });
     }
     // check if the req is for the current user
-    console.log(request.recipient._id.toString(),userId.toString() )
     if (request.recipient._id.toString() !== userId.toString()) {
       return res
         .status(403)

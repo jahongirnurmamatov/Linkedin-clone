@@ -10,7 +10,7 @@ const RecommendedUser = ({ user }) => {
     queryKey: ["connnectionStatus", user._id],
     queryFn: () => axiosInstanse.get(`/connection/status/${user._id}`),
   });
-  console.log(connectionStatus?.data)
+
   const { mutate: sendConnectionRequest } = useMutation({
     mutationFn: (userId) => axiosInstanse.post(`/connection/request/${userId}`),
     onSuccess: () => {
