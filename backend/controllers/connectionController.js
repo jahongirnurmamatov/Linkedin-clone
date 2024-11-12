@@ -47,7 +47,8 @@ export const acceptConnectRequest = async (req, res) => {
       return res.status(404).json({ message: "Request not found!" });
     }
     // check if the req is for the current user
-    if (request.recipient._id.toString() === userId.toString()) {
+    console.log(request.recipient._id.toString(),userId.toString() )
+    if (request.recipient._id.toString() !== userId.toString()) {
       return res
         .status(403)
         .json({ message: "You are not authorized to accept this request!" });
@@ -180,7 +181,7 @@ export const getConnectionStatus = async (req, res) => {
       if (pendingRequest.sender.toString() === currentUserId.toString()) {
         return res.json({ status: "pending" });
       } else {
-        return res.json({ status: "received" });
+        return res.json({ status: "received",requestId: pendingRequest._id  });
       }
     }
     // if no connection or pending req found

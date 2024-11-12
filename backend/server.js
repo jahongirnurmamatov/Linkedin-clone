@@ -30,7 +30,7 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/posts", postRoutes);
 app.use("/api/v1/notifications", notificationRoutes);
-app.use("/api/v1/connections", connectionRoutes);
+app.use("/api/v1/connection", connectionRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

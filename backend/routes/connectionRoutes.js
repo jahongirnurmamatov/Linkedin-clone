@@ -14,12 +14,12 @@ const router = express.Router();
 
 router.post("/request/:userId", protectRoute, sendConenctionRequest);
 router.post("/accept/:requestId", protectRoute, acceptConnectRequest);
-router.post("/reject/:userId", protectRoute, rejectConenctionRequest);
+router.post("/reject/:requestId", protectRoute, rejectConenctionRequest);
 
 router.get("/requests", protectRoute, getConnectionRequests);
 
 router.get("/", protectRoute, getConnections);
 router.delete("/:userId", protectRoute, deleteConnection);
-router.get("/status/:userId", protectRoute, getConnectionStatus);
+router.get("/status/:userId", protectRoute,  getConnectionStatus);
 
 export default router;

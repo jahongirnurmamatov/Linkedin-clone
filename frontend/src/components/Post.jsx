@@ -180,8 +180,9 @@ const Post = ({ post }) => {
                         {formatDistanceToNow(new Date(comment.createdAt))}
                       </span>
                     </span>
-                    <p>{comment.content}</p>
+                    
                   </div>
+                  <p>{comment.content}</p>
                 </div>
               </div>
             ))}
