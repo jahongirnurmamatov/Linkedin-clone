@@ -9,6 +9,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { useQuery } from "@tanstack/react-query";
 import { axiosInstanse } from "./lib/axios";
 import NotificationsPage from "./pages/NotificationsPage";
+import NetworksPage from "./pages/NetworksPage";
 
 const App = () => {
   const { data: authUser, isLoading } = useQuery({
@@ -48,6 +49,10 @@ const App = () => {
         <Route
           path="/notifications"
           element={authUser ? <NotificationsPage /> : <Navigate to={"/login"} />}
+        />
+        <Route
+          path="/network"
+          element={authUser ? <NetworksPage /> : <Navigate to={"/login"} />}
         />
       </Routes>
       <Toaster />

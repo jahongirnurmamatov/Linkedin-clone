@@ -103,7 +103,7 @@ export const rejectConenctionRequest = async (req, res) => {
     const { requestId } = req.params;
     const userId = req.user._id;
     const request = await Connection.findById(requestId);
-    if (request.recipient._id.toString() === userId.toString()) {
+    if (request.recipient._id.toString() !== userId.toString()) {
       return res
         .status(403)
         .json({ message: "You are not authorized to reject this request" });

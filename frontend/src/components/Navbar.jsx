@@ -10,9 +10,9 @@ const Navbar = () => {
 
   const { data: notifications } = useQuery({
     queryKey: ["notifications"],
-    queryFn: async () => await axiosInstanse.get("/notifications"),
-    enabled: !!authUser,
+    queryFn: () => axiosInstanse.get("/notifications"),
   });
+
   const { data: connectionRequests } = useQuery({
     queryKey: ["connectionRequests"],
     queryFn: async () => await axiosInstanse.get("/connection/requests"),
@@ -25,10 +25,10 @@ const Navbar = () => {
       queryClient.invalidateQueries({queryKey:["authUser"]});
     }
   });
-  const unreadNotificationCount = notifications?.data.filter(
-    (notif) => !notif
+  const unreadNotificationCount = notifications?.data?.filter(
+    (notif) =>!notif.read
   ).length;
-  const unreadConnectionRequestsCount = connectionRequests?.data?.lengthlength;
+  const unreadConnectionRequestsCount = connectionRequests?.data?.length;
 
   return (
     <nav className="bg-secondary shadow-md sticky top-0 z-10">
